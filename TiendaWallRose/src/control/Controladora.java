@@ -114,49 +114,66 @@ public class Controladora {
 	//Ordenes
 	
 	public List<Orden> obtenerListadoOrdenes() {
-		
+		return new ArrayList<>(ordenes.values());
 	}
 	
 	public double obtenerMontoTotalPendiente() {
-		
+		double total = 0;
+		for (Orden orden : ordenes.values()) {
+			if (orden.getEstado() == EstadoOrden.PENDIENTE)
+				total += orden.calcularMontoTotal();
+		}
+		return total;
 	}
 	
 	public void crearOrdenVacia(String idCliente) {
-		
+		Cliente cliente = clientes.get(idCliente);
+		int numero = consecutivoOrden++;
+		Orden orden = new Orden(numero, cliente);
+		ordenes.put(numero, orden);
+		cliente.agregarOrden(orden);
 	}
 	
 	public Orden obtenerOrden(int numeroOrden) {
-		
+		return ordenes.get(numeroOrden);
 	}
 	
 	public List<LineaOrden> obtenerLineasOrden(int numeroOrden) {
-		
+		return ordenes.get(numeroOrden).getLineas();
 	}
 	
 	public void establecerOrdenPendiente(int numeroOrden) {
-		
+		ordenes.get(numeroOrden).setEstado(EstadoOrden.PENDIENTE);
 	}
 	
 	public void establecerOrdenTerminada(int numeroOrden) {
-		
+		ordenes.get(numeroOrden).setEstado(EstadoOrden.TERMINADA);
 	}
 	
-	//Lineas 
+	//Lineas de orden
 	
 	public void agregarLineaOrden(int numeroOrden, int codigoProducto, double cantidad) {
-		
+		Orden orden = ordenes.get(numeroOrden);
+		Producto producto = productos.get(codigoProducto);
+		LineaOrden linea = new LineaOrden(cantidad, producto);
+		orden.agregarLinea(linea);
 	}
 	
 	public void actualizarLineaOrden(int numeroOrden, int numeroLinea, int codigoProducto, double cantidad) {
-		
+		Orden orden = ordenes.get(numeroOrden);
+		LineaOrden linea = orden.getLineas().get(numeroLinea);
+		linea.setProducto(productos.get(codigoProducto));
+		linea.setCantidad(cantidad);
 	}
 	
 	public void borrarLineaOrden(int numeroOrden, int numeroLinea) {
-		
+		ordenes.get(numeroOrden).borrarLinea(numeroLinea);
 	}
 	
 	public void borrarOrden(int numeroOrden) {
-		
+		Orden orden = ordenes.get(numeroOrden);
+		orden.getCliente().borrarOrden(orden);
+		ordenes.remove(numeroOrden);
 	}
 	
 }
