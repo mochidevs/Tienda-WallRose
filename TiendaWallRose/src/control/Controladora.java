@@ -19,7 +19,7 @@ public class Controladora {
 	
 	public Controladora() {
 		consecutivoOrden = 100;
-		consecutivoProducto = 800;
+		consecutivoProducto = 600;
 		clientes = new TreeMap<String, Cliente>();
 		ordenes = new TreeMap<Integer, Orden>();
 		productos = new TreeMap<Integer, Producto>();
@@ -86,23 +86,29 @@ public class Controladora {
 	//Productos
 	
 	public List<Producto> obtenerListadoProductos() {
-		
+		return new ArrayList<>(productos.values());
 	}
 	
 	public void crearProducto(String nombre, double existencias, String unidad, double precio) {
-		
+		int codigo = consecutivoProducto++;
+		Producto producto = new Producto(codigo, nombre, existencias, unidad, precio);
+		productos.put(codigo, producto);
 	}
 	
 	public Producto obtenerProducto(int codigoProducto) {
-		
+		return productos.get(codigoProducto);
 	}
 	
 	public void actualizarProducto(int codigoProducto, String nombre, double existencias, String unidad, double precio) {
-		
+		Producto producto = productos.get(codigoProducto);
+		producto.setNombre(nombre);
+		producto.setExistencias(existencias);
+		producto.setUnidad(unidad);
+		producto.setPrecio(precio);
 	}
 	
 	public void borrarProducto(int codigoProducto) {
-		
+		productos.remove(codigoProducto);
 	}
 	
 	//Ordenes
