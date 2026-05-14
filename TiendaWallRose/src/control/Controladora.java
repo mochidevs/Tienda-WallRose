@@ -1,12 +1,14 @@
 package control;
 
 import logica.Cliente;
+import logica.EstadoOrden;
 import logica.Orden;
 import logica.Producto;
 import logica.LineaOrden;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.List;
+import java.util.ArrayList;
 
 public class Controladora {
 	private int consecutivoOrden;
@@ -26,39 +28,59 @@ public class Controladora {
 	//Clientes
 	
 	public List<Cliente> obtenerListadoClientes() {
-		
+		return new ArrayList<>(clientes.values());
 	}
 	
 	public Cliente obtenerCliente(String idCliente) {
-		
+		return clientes.get(idCliente);
 	}
 	
 	public List<Orden> obtenerListadoOrdenesCliente(String idCliente) {
-		
+		Cliente cliente = clientes.get(idCliente);
+		return new ArrayList<>(cliente.getOrdenes().values());
 	}
 	
 	public List<Orden> obtenerListadoOrdenesIniciadasCliente(String idCliente) {
+		List<Orden> resultado = new ArrayList<>();
 		
+		for (Orden orden : clientes.get(idCliente).getOrdenes().values()) {
+			if (orden.getEstado() == EstadoOrden.INICIADA) 
+				resultado.add(orden);
+		}
+		return resultado;
 	}
 	
 	public List<Orden> obtenerListadoOrdenesPendientesCliente(String idCliente) {
-		
+		List<Orden> resultado = new ArrayList<>();
+		for (Orden orden : clientes.get(idCliente).getOrdenes().values()) {
+			if (orden.getEstado() == EstadoOrden.PENDIENTE) 
+				resultado.add(orden);
+		}
+		return resultado;
 	}
 	
 	public List<Orden> obtenerListadoOrdenesTerminadasCliente(String idCliente) {
-		
+		List<Orden> resultado = new ArrayList<>();
+		for (Orden orden : clientes.get(idCliente).getOrdenes().values()) {
+			if (orden.getEstado() == EstadoOrden.TERMINADA) 
+				resultado.add(orden);
+		}
+		return resultado;
 	}
 	
 	public void crearCliente(String idCliente, String nombre, String email) {
-		
+		Cliente cliente = new Cliente(idCliente, nombre, email);
+		clientes.put(idCliente, cliente);
 	}
 	
 	public void actualizarCliente(String idCliente, String nombre, String email) {
-		
+		Cliente cliente = clientes.get(idCliente);
+		cliente.setNombre(nombre);
+		cliente.setEmail(email);
 	}
 	
 	public void borrarCliente(String idCliente) {
-		
+		clientes.remove(idCliente);
 	}
 	
 	//Productos
