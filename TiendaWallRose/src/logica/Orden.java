@@ -13,7 +13,7 @@ public class Orden {
 	private EstadoOrden estado;
 	
 	public Orden(int numero, Cliente cliente) {
-		IV = 13.0;
+		IV = 0.13;
 		this.numero = numero;
 		this.cliente = cliente;
 		this.estado = EstadoOrden.INICIADA;

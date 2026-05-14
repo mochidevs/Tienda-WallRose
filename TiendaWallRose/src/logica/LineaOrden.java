@@ -5,10 +5,28 @@ public class LineaOrden {
 	private Producto producto;
 	
 	public LineaOrden(double cantidad, Producto producto) {
-		cantidad = 0.0;
+		this.cantidad = cantidad;
+		this.producto = producto;
+	}
+
+	public double getCantidad() {
+		return cantidad;
+	}
+
+	public void setCantidad(double cantidad) {
+		this.cantidad = cantidad;
+	}
+
+	public Producto getProducto() {
+		return producto;
+	}
+
+	public void setProducto(Producto producto) {
 		this.producto = producto;
 	}
 	
-	
+	public double calcularCosto() {
+		return cantidad * producto.getPrecio();
+	}
 	
 }
