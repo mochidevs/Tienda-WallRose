@@ -3,6 +3,7 @@ package control;
 import logica.Cliente;
 import logica.Orden;
 import logica.Producto;
+import logica.LineaOrden;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.List;
@@ -74,6 +75,60 @@ public class Controladora {
 		
 	}
 	
+	public void actualizarProducto(int codigoProducto, String nombre, double existencias, String unidad, double precio) {
+		
+	}
 	
+	public void borrarProducto(int codigoProducto) {
+		
+	}
+	
+	//Ordenes
+	
+	public List<Orden> obtenerListadoOrdenes() {
+		
+	}
+	
+	public double obtenerMontoTotalPendiente() {
+		
+	}
+	
+	public void crearOrdenVacia(String idCliente) {
+		
+	}
+	
+	public Orden obtenerOrden(int numeroOrden) {
+		
+	}
+	
+	public List<LineaOrden> obtenerLineasOrden(int numeroOrden) {
+		
+	}
+	
+	public void establecerOrdenPendiente(int numeroOrden) {
+		
+	}
+	
+	public void establecerOrdenTerminada(int numeroOrden) {
+		
+	}
+	
+	//Lineas 
+	
+	public void agregarLineaOrden(int numeroOrden, int codigoProducto, double cantidad) {
+		
+	}
+	
+	public void actualizarLineaOrden(int numeroOrden, int numeroLinea, int codigoProducto, double cantidad) {
+		
+	}
+	
+	public void borrarLineaOrden(int numeroOrden, int numeroLinea) {
+		
+	}
+	
+	public void borrarOrden(int numeroOrden) {
+		
+	}
 	
 }
