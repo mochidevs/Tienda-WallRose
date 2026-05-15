@@ -11,18 +11,29 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Controladora {
+	
+	public static Controladora instancia;
+	
 	private int consecutivoOrden;
 	private int consecutivoProducto;
 	private Map<String, Cliente> clientes;
 	private Map<Integer, Orden> ordenes;
 	private Map<Integer, Producto> productos;
 	
-	public Controladora() {
+	//Esconder constructor
+	private Controladora() {
 		consecutivoOrden = 100;
 		consecutivoProducto = 600;
 		clientes = new TreeMap<String, Cliente>();
 		ordenes = new TreeMap<Integer, Orden>();
 		productos = new TreeMap<Integer, Producto>();
+	}
+	
+	//Acceso global
+	public static Controladora getInstancia() {
+		if (instancia == null)
+			instancia = new Controladora();
+		return instancia;
 	}
 	
 	//Clientes
