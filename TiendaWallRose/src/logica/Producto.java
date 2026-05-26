@@ -8,11 +8,11 @@ public class Producto {
 	private double precio;
 	
 	public Producto(int codigo, String nombre, double existencias, String unidad, double precio) {
-		codigo = 0;
+		this.codigo = codigo;
 		this.nombre = nombre;
-		existencias = 0.0;
+		this.existencias = existencias;
 		this.unidad = unidad;
-		precio = 0.0;
+		this.precio = precio;
 	}
 
 	public int getCodigo() {

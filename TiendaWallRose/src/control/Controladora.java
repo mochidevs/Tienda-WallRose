@@ -7,6 +7,8 @@ import logica.Producto;
 import logica.LineaOrden;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -22,33 +24,72 @@ public class Controladora {
 	
 	//Esconder constructor
 	private Controladora() {
-		consecutivoOrden = 100;
-		consecutivoProducto = 600;
-		clientes = new TreeMap<String, Cliente>();
-		ordenes = new TreeMap<Integer, Orden>();
-		productos = new TreeMap<Integer, Producto>();
+		this. consecutivoOrden = 100;
+		this.consecutivoProducto = 600;
+		this.clientes = new TreeMap<String, Cliente>();
+		this.ordenes = new TreeMap<Integer, Orden>();
+		this.productos = new TreeMap<Integer, Producto>();
 	}
 	
 	//Acceso global
 	public static Controladora getInstancia() {
-		if (instancia == null)
+		if (instancia == null) {
 			instancia = new Controladora();
+		}
 		return instancia;
 	}
 	
 	//Clientes
 	
 	public List<Cliente> obtenerListadoClientes() {
-		return new ArrayList<>(clientes.values());
+		List<Cliente> listaClientes = new ArrayList<Cliente>();
+		for (Map.Entry<String, Cliente> e : clientes.entrySet()) {
+			listaClientes.add(e.getValue());
+		}
+		return listaClientes;
 	}
 	
-	public Cliente obtenerCliente(String idCliente) {
+	private void verificarClienteExistente(String idCliente) throws Exception {
+		if (clientes.containsKey(idCliente))
+			throw new Exception("Cliente no encontrado");
+	}
+	
+	private boolean esEmailValido(String email) {
+		Pattern p = Pattern.compile("^[a-zA-Z0-9_!#\\$%&'*+/=?^{|}~.-]+@[a-zA-Z0-9.-]+$");
+		Matcher m = p.matcher(email);
+		return m.matches();
+	}
+	
+	private void verificarEmail(String email) throws Exception {
+		if (!esEmailValido(email))
+			throw new Exception("Email no válido.");
+	}
+	
+	private void verificarProductoExistente(Integer codigoProducto) throws Exception {
+		if (!productos.containsKey(codigoProducto))
+			throw new Exception("Producto no encontrado.");
+	}
+	
+	private void verificarOrdenExistente(Integer numeroOrden) throws Exception {
+		if (!ordenes.containsKey(numeroOrden))
+			throw new Exception("Orden no encontrada.");
+	}
+	
+	
+	public Cliente obtenerCliente(String idCliente) throws Exception {
+		verificarClienteExistente(idCliente);
 		return clientes.get(idCliente);
 	}
 	
-	public List<Orden> obtenerListadoOrdenesCliente(String idCliente) {
+	public List<Orden> obtenerListadoOrdenesCliente(String idCliente) throws Exception {
+		verificarClienteExistente(idCliente);
 		Cliente cliente = clientes.get(idCliente);
-		return new ArrayList<>(cliente.getOrdenes().values());
+		List<Orden> listaOrdenes = new ArrayList<Orden>();
+		Map<Integer, Orden> ordenes = cliente.getOrdenes();
+		for (Orden o : ordenes.values()) {
+			listaOrdenes.add(o);
+		}
+		return listaOrdenes;
 	}
 	
 	public List<Orden> obtenerListadoOrdenesIniciadasCliente(String idCliente) {
@@ -79,24 +120,33 @@ public class Controladora {
 		return resultado;
 	}
 	
-	public void crearCliente(String idCliente, String nombre, String email) {
+	public void crearCliente(String idCliente, String nombre, String email) throws Exception {
+		verificarEmail(email);
 		Cliente cliente = new Cliente(idCliente, nombre, email);
 		clientes.put(idCliente, cliente);
 	}
 	
-	public void actualizarCliente(String idCliente, String nombre, String email) {
+	public void actualizarCliente(String idCliente, String nombre, String email) throws Exception {
+		verificarEmail(email);
 		Cliente cliente = clientes.get(idCliente);
 		cliente.setNombre(nombre);
 		cliente.setEmail(email);
 	}
 	
-	public void borrarCliente(String idCliente) {
+	public void borrarCliente(String idCliente) throws Exception {
+		verificarClienteExistente(idCliente);
+		Cliente cliente = clientes.get(idCliente);
+		Map<Integer, Orden> ordenes = cliente.getOrdenes();
+		for (Integer numeroOrden : ordenes.keySet()) {
+			ordenes.remove(numeroOrden);
+		}
 		clientes.remove(idCliente);
 	}
 	
 	//Productos
 	
 	public List<Producto> obtenerListadoProductos() {
+		
 		return new ArrayList<>(productos.values());
 	}
 	
