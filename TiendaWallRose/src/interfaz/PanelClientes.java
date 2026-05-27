@@ -13,6 +13,7 @@ public class PanelClientes extends JPanel {
 	
 	// Ref a singleton
 	private final Controladora control = Controladora.getInstancia();
+	private static final long serialVersionUID = 1L;
 	
 	// Form del cliente
 	private JTextField txtId;
@@ -28,8 +29,6 @@ public class PanelClientes extends JPanel {
 	// Tabla
 	private JTable tablaClientes;
 	private DefaultTableModel modeloTabla;
-	private JTextField textField;
-	private JTextField textField_1;
 	private JTextField textId;
 	private GridBagConstraints gbc_labelNombre;
 	private JTextField textNombre;
@@ -144,7 +143,7 @@ public class PanelClientes extends JPanel {
 	}
 	
 	private JPanel crearPanelBotones() {
-		JPanel panel =  new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+		JPanel panelBotones =  new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
 		
 		btnAgregar = new JButton("Agregar");
 		btnActualizar = new JButton("Actualizar");
@@ -157,17 +156,106 @@ public class PanelClientes extends JPanel {
 		btnBorrar.setOpaque(true);
 		btnBorrar.setBorderPainted(false);
 		
-		panel.add(btnAgregar);
-		panel.add(btnActualizar);
-		panel.add(btnBorrar);
-		panel.add(btnLimpiar);
+		panelBotones.add(btnAgregar);
+		panelBotones.add(btnActualizar);
+		panelBotones.add(btnBorrar);
+		panelBotones.add(btnLimpiar);
 		
-		return panel;
+		return panelBotones;
 	}
 	
 	// Eventos
 	
 	private void configurarEventos() {
+		// Botón Agregar
+		
+			//Validaciones
+		btnAgregar.addActionListener(e -> {
+			String id = txtId.getText().trim();
+			String nombre = txtNombre.getText().trim();
+			String email = txtEmail.getText().trim();
+			
+			if (id.isEmpty() || nombre.isEmpty() || email.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Complete todos los campos.", "Aviso", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
+			// Verificar ID
+			try {
+				if (control.obtenerCliente(id) != null) {
+					JOptionPane.showMessageDialog(this, "Ya existe un cliente con ese ID.", "Error", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			control.crearCliente(id, nombre, email);
+			cargarTabla();
+			limpiarCampos();
+			JOptionPane.showMessageDialog(this, "Cliente creado.");
+			
+		});
+		
+		// Botón Actualizar
+			// Solo cambia nombre y email
+		btnActualizar.addActionListener(e -> {
+			int fila = tablaClientes.getSelectedRow();
+			if (fila == -1) {
+				JOptionPane.showMessageDialog(this, "Seleccione un cliente en la tabla.", "Aviso", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
+				// Confirma eliminado
+			String id = modeloTabla.getValueAt(fila, 0).toString();
+			int confirmar = JOptionPane.showConfirmDialog(this, "¿Eliminar el cliente |" + id + "| ?", "Confirmar eliminación", 
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			
+			if (confirmar == JOptionPane.YES_NO_OPTION) {
+				control.borrarCliente(id);
+				cargarTabla();
+				limpiarCampos();
+			}
+			
+		});
+		
+		// Limpiar
+		
+		btnLimpiar.addActionListener(e -> limpiarCampos());
+		
+			// Rellenar campos
+		tablaClientes.getSelectionModel().addListSelectionListener(e -> {
+			if (!e.getValueIsAdjusting()) {
+				int fila = tablaClientes.getSelectedRow();
+				if (fila >= 0) {
+					txtId.setText(modeloTabla.getValueAt(fila, 0).toString());
+                    txtNombre.setText(modeloTabla.getValueAt(fila, 1).toString());
+                    txtEmail.setText(modeloTabla.getValueAt(fila, 2).toString());
+                    txtId.setEditable(false);	// no se cambia
+				}
+			}
+						
+		});
 		
 	}
+	
+	//Recarga la tabla en control
+	private void cargarTabla() {
+		modeloTabla.setRowCount(0);		// borra las filas
+		List<Cliente> lista = control.obtenerListadoClientes();
+		for (Cliente c : lista) {
+			modeloTabla.addRow(new Object[] {
+				c.getId(), c.getNombre(), c.getEmail()	
+			}); 
+		}
+	}
+	private void limpiarCampos() {
+		txtId.setText("");
+		txtNombre.setText("");
+		txtEmail.setText("");
+		txtId.setEditable(true);
+		tablaClientes.clearSelection();
+	}
+	
+	
 }
